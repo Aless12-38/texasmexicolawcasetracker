@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Sun, Moon, Scale, Plus, Printer, ArrowUpDown, GripVertical, X, Edit2, History, Trash2, Menu, LogOut } from 'lucide-react';
-import { io } from 'socket.io-client';
-import CaseList from './components/CaseList';
 import { Case, TabType, SortOption, CaseHistory, ViewMode } from './types';
 import { defaultCases } from './data/defaultCases';
+import CaseList from './components/CaseList';
 import CaseForm from './components/CaseForm';
 import DeleteConfirmation from './components/DeleteConfirmation';
 import PrintModal from './components/PrintModal';
@@ -14,14 +13,6 @@ import { supabase } from './lib/supabase';
 
 const MAX_HISTORY_VERSIONS = 10;
 const AUTO_SAVE_DELAY = 2000; // 2 seconds
-
-// Initialize Socket.IO client
-const socket = io('http://localhost:3001', {
-  autoConnect: true,
-  reconnection: true,
-  reconnectionAttempts: Infinity,
-  reconnectionDelay: 1000,
-});
 
 function App() {
   const [session, setSession] = useState(null);
@@ -75,36 +66,41 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Socket.IO event listeners
   useEffect(() => {
-    socket.on('casesUpdated', (updatedCases: Case[]) => {
-      setCases(updatedCases);
-    });
+    const channel = supabase
+      .channel('cases_channel')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'cases'
+        },
+        async (payload) => {
+          // Fetch the latest data from Supabase
+          const { data: updatedCases, error } = await supabase
+            .from('cases')
+            .select('*')
+            .order('created_at', { ascending: false });
 
-    socket.on('trashUpdated', (updatedTrash: Case[]) => {
-      setTrash(updatedTrash);
-    });
+          if (error) {
+            console.error('Error fetching updated cases:', error);
+            return;
+          }
 
-    socket.on('historyUpdated', (updatedHistory: CaseHistory) => {
-      setCaseHistory(updatedHistory);
-    });
-
-    socket.on('tabsUpdated', (updatedTabs: string[]) => {
-      setTabs(updatedTabs);
-    });
+          setCases(updatedCases);
+        }
+      )
+      .subscribe();
 
     return () => {
-      socket.off('casesUpdated');
-      socket.off('trashUpdated');
-      socket.off('historyUpdated');
-      socket.off('tabsUpdated');
+      supabase.removeChannel(channel);
     };
   }, []);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       localStorage.setItem('cases', JSON.stringify(cases));
-      socket.emit('updateCases', cases);
     }, AUTO_SAVE_DELAY);
 
     return () => clearTimeout(timeoutId);
@@ -112,17 +108,14 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem('trash', JSON.stringify(trash));
-    socket.emit('updateTrash', trash);
   }, [trash]);
 
   useEffect(() => {
     localStorage.setItem('caseHistory', JSON.stringify(caseHistory));
-    socket.emit('updateHistory', caseHistory);
   }, [caseHistory]);
 
   useEffect(() => {
     localStorage.setItem('tabs', JSON.stringify(tabs));
-    socket.emit('updateTabs', tabs);
   }, [tabs]);
 
   useEffect(() => {
@@ -153,30 +146,65 @@ function App() {
 
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
-  const handleAddCase = (newCase: Case) => {
+  const handleAddCase = async (newCase: Case) => {
     const caseWithId = { ...newCase, id: crypto.randomUUID() };
-    setCases([...cases, caseWithId]);
+    
+    const { error } = await supabase
+      .from('cases')
+      .insert([caseWithId]);
+
+    if (error) {
+      console.error('Error adding case:', error);
+      return;
+    }
+
     addToHistory(caseWithId);
     setIsFormOpen(false);
   };
 
-  const handleEditCase = (updatedCase: Case) => {
-    setCases(cases.map(c => c.id === updatedCase.id ? updatedCase : c));
+  const handleEditCase = async (updatedCase: Case) => {
+    const { error } = await supabase
+      .from('cases')
+      .update(updatedCase)
+      .eq('id', updatedCase.id);
+
+    if (error) {
+      console.error('Error updating case:', error);
+      return;
+    }
+
     addToHistory(updatedCase);
     setEditingCase(null);
   };
 
-  const handleDeleteCase = () => {
+  const handleDeleteCase = async () => {
     if (deletingCase) {
-      setCases(cases.filter(c => c.id !== deletingCase.id));
+      const { error } = await supabase
+        .from('cases')
+        .delete()
+        .eq('id', deletingCase.id);
+
+      if (error) {
+        console.error('Error deleting case:', error);
+        return;
+      }
+
       setTrash([...trash, { ...deletingCase, deleted: true }]);
       setDeletingCase(null);
     }
   };
 
-  const restoreCase = (caseToRestore: Case) => {
+  const restoreCase = async (caseToRestore: Case) => {
+    const { error } = await supabase
+      .from('cases')
+      .insert([{ ...caseToRestore, deleted: false }]);
+
+    if (error) {
+      console.error('Error restoring case:', error);
+      return;
+    }
+
     setTrash(trash.filter(c => c.id !== caseToRestore.id));
-    setCases([...cases, { ...caseToRestore, deleted: false }]);
   };
 
   const permanentlyDeleteCase = (caseToDelete: Case) => {
