@@ -30,15 +30,12 @@ const CaseCard: React.FC<CaseCardProps> = ({
   const calculateProgress = () => {
     const checklistCount = Object.keys(caseData.checklist).length;
     const completedChecklist = Object.values(caseData.checklist).filter(item => item.checked).length;
-    const checklistProgress = (completedChecklist / checklistCount) * 0.7;
-
-    const totalTranscripts = caseData.transcripts.videos.items.length + caseData.transcripts.audio.items.length;
-    const completedTranscripts = 
-      caseData.transcripts.videos.items.filter(item => item.completed).length +
-      caseData.transcripts.audio.items.filter(item => item.completed).length;
-    const transcriptProgress = totalTranscripts > 0 ? (completedTranscripts / totalTranscripts) * 0.3 : 0;
-
-    return Math.round((checklistProgress + transcriptProgress) * 100);
+    const transcriptProgress = 
+      (caseData.transcripts.videos.items.filter(i => i.completed).length +
+       caseData.transcripts.audio.items.filter(i => i.completed).length) /
+      (caseData.transcripts.videos.items.length + caseData.transcripts.audio.items.length || 1);
+    
+    return Math.round(((completedChecklist / checklistCount) * 0.7 + transcriptProgress * 0.3) * 100);
   };
 
   const handleChecklistChange = (key: keyof typeof caseData.checklist, checked: boolean) => {
@@ -71,8 +68,8 @@ const CaseCard: React.FC<CaseCardProps> = ({
             <div className="flex-1">
               <div className="flex items-center gap-4">
                 <div>
-                  <h3 className="text-xl font-bold">{caseData.clientName}</h3>
-                  <p className="text-sm opacity-75">Case #{caseData.caseNumber}</p>
+                  <h3 className="text-xl font-bold">{caseData.client_name}</h3>
+                  <p className="text-sm opacity-75">Case #{caseData.case_number}</p>
                 </div>
                 <div className="flex-1">
                   <div className="w-full max-w-xs">
@@ -142,7 +139,7 @@ const CaseCard: React.FC<CaseCardProps> = ({
                 </div>
                 <div>
                   <p className="text-sm opacity-75">Court Date</p>
-                  <p>{new Date(caseData.courtDate).toLocaleDateString()}</p>
+                  <p>{new Date(caseData.court_date).toLocaleDateString()}</p>
                 </div>
               </div>
 
@@ -152,7 +149,7 @@ const CaseCard: React.FC<CaseCardProps> = ({
                   <div className={`w-full px-3 py-2 rounded-lg ${
                     darkMode ? 'bg-neutral-700' : 'bg-gray-100'
                   }`}>
-                    <p>{caseData.nextStep || 'No next steps specified'}</p>
+                    <p>{caseData.next_step || 'No next steps specified'}</p>
                   </div>
                 </div>
 
@@ -161,7 +158,7 @@ const CaseCard: React.FC<CaseCardProps> = ({
                   <div className={`w-full px-3 py-2 rounded-lg ${
                     darkMode ? 'bg-neutral-700' : 'bg-gray-100'
                   }`}>
-                    <p>{caseData.followUp || 'No follow-up items'}</p>
+                    <p>{caseData.follow_up || 'No follow-up items'}</p>
                   </div>
                 </div>
               </div>
@@ -221,8 +218,8 @@ const CaseCard: React.FC<CaseCardProps> = ({
       <div className="p-4">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4">
           <div>
-            <h3 className="text-xl font-bold mb-1">{caseData.clientName}</h3>
-            <p className="text-sm opacity-75">Case #{caseData.caseNumber}</p>
+            <h3 className="text-xl font-bold mb-1">{caseData.client_name}</h3>
+            <p className="text-sm opacity-75">Case #{caseData.case_number}</p>
           </div>
           <div className="flex items-center gap-2 self-end sm:self-start">
             <button
@@ -287,7 +284,7 @@ const CaseCard: React.FC<CaseCardProps> = ({
           </div>
           <div>
             <p className="text-sm opacity-75">Court Date</p>
-            <p>{new Date(caseData.courtDate).toLocaleDateString()}</p>
+            <p>{new Date(caseData.court_date).toLocaleDateString()}</p>
           </div>
         </div>
 
@@ -300,7 +297,7 @@ const CaseCard: React.FC<CaseCardProps> = ({
                 : 'bg-gray-100'
             }`}>
               <p className={`${expanded ? '' : 'line-clamp-2'}`}>
-                {caseData.nextStep || 'No next steps specified'}
+                {caseData.next_step || 'No next steps specified'}
               </p>
             </div>
           </div>
@@ -313,7 +310,7 @@ const CaseCard: React.FC<CaseCardProps> = ({
                 : 'bg-gray-100'
             }`}>
               <p className={`${expanded ? '' : 'line-clamp-2'}`}>
-                {caseData.followUp || 'No follow-up items'}
+                {caseData.follow_up || 'No follow-up items'}
               </p>
             </div>
           </div>
