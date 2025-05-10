@@ -147,7 +147,11 @@ function App() {
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
   const handleAddCase = async (newCase: Case) => {
-    const caseWithId = { ...newCase, id: crypto.randomUUID() };
+    const caseWithId = { 
+      ...newCase, 
+      id: crypto.randomUUID(),
+      case_number: newCase.caseNumber // Convert to snake_case for database
+    };
     
     const { error } = await supabase
       .from('cases')
@@ -163,9 +167,14 @@ function App() {
   };
 
   const handleEditCase = async (updatedCase: Case) => {
+    const caseForDb = {
+      ...updatedCase,
+      case_number: updatedCase.caseNumber // Convert to snake_case for database
+    };
+
     const { error } = await supabase
       .from('cases')
-      .update(updatedCase)
+      .update(caseForDb)
       .eq('id', updatedCase.id);
 
     if (error) {
