@@ -49,8 +49,8 @@ const TrashModal: React.FC<TrashModalProps> = ({
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div>
-                      <p className="font-medium">{caseItem.clientName}</p>
-                      <p className="text-sm opacity-75">Case #{caseItem.caseNumber}</p>
+                      <p className="font-medium">{caseItem.client_name}</p>
+                      <p className="text-sm opacity-75">Case #{caseItem.case_number}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
@@ -70,7 +70,7 @@ const TrashModal: React.FC<TrashModalProps> = ({
                     </div>
                   </div>
                   <div className="mt-2 text-sm opacity-75">
-                    <p>Court Date: {new Date(caseItem.courtDate).toLocaleDateString()}</p>
+                    <p>Court Date: {new Date(caseItem.court_date).toLocaleDateString()}</p>
                     <p>Offense: {caseItem.offense}</p>
                   </div>
                 </div>

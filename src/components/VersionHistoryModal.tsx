@@ -6,7 +6,6 @@ interface VersionHistoryModalProps {
   caseData: Case;
   versions: CaseVersion[];
   onRestore: (caseId: string, version: number) => void;
-  
   onClose: () => void;
   darkMode: boolean;
 }
@@ -27,7 +26,7 @@ const VersionHistoryModal: React.FC<VersionHistoryModalProps> = ({
           <div>
             <h2 className="text-xl font-bold">Version History</h2>
             <p className="text-sm opacity-75">
-              {caseData.clientName} - Case #{caseData.caseNumber}
+              {caseData.client_name} - Case #{caseData.case_number}
             </p>
           </div>
           <button
@@ -64,11 +63,11 @@ const VersionHistoryModal: React.FC<VersionHistoryModalProps> = ({
                   <div className="space-y-2 text-sm">
                     <p>
                       <span className="opacity-75">Next Step:</span>{' '}
-                      {version.data.nextStep || 'None'}
+                      {version.data.next_step || 'None'}
                     </p>
                     <p>
                       <span className="opacity-75">Follow Up:</span>{' '}
-                      {version.data.followUp || 'None'}
+                      {version.data.follow_up || 'None'}
                     </p>
                     <p>
                       <span className="opacity-75">Checklist Items Completed:</span>{' '}

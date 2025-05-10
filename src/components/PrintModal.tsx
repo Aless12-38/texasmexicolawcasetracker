@@ -133,11 +133,11 @@ const PrintModal: React.FC<PrintModalProps> = ({
           ${casesToPrint.map(caseItem => `
             <div class="case">
               <div class="section">
-                <div class="title">${caseItem.clientName}</div>
+                <div class="title">${caseItem.client_name}</div>
                 <div class="grid">
                   <div>
                     <span class="label">Case Number:</span>
-                    <span>${caseItem.caseNumber}</span>
+                    <span>${caseItem.case_number}</span>
                   </div>
                   <div>
                     <span class="label">Court:</span>
@@ -145,7 +145,7 @@ const PrintModal: React.FC<PrintModalProps> = ({
                   </div>
                   <div>
                     <span class="label">Court Date:</span>
-                    <span>${new Date(caseItem.courtDate).toLocaleDateString()}</span>
+                    <span>${new Date(caseItem.court_date).toLocaleDateString()}</span>
                   </div>
                   <div>
                     <span class="label">Offense:</span>
@@ -155,7 +155,7 @@ const PrintModal: React.FC<PrintModalProps> = ({
                 
                 <div class="next-step">
                   <div class="label">Next Step / Important:</div>
-                  <div>${caseItem.nextStep || 'No next steps specified'}</div>
+                  <div>${caseItem.next_step || 'No next steps specified'}</div>
                 </div>
 
                 <div class="label">Overall Progress:</div>

@@ -20,13 +20,13 @@ const CaseForm: React.FC<CaseFormProps> = ({
   const [formData, setFormData] = useState<Partial<Case>>(
     editingCase || {
       type: availableTabs[0] as TabType,
-      caseNumber: '',
-      clientName: '',
+      case_number: '',
+      client_name: '',
       offense: '',
       court: '',
-      courtDate: '',
-      nextStep: '',
-      followUp: '',
+      court_date: '',
+      next_step: '',
+      follow_up: '',
       checklist: {
         DME: { checked: false, notes: '' },
         'Scan OCR': { checked: false, notes: '' },
@@ -98,8 +98,8 @@ const CaseForm: React.FC<CaseFormProps> = ({
                 <label className="block text-sm font-medium mb-1">Case Number</label>
                 <input
                   type="text"
-                  value={formData.caseNumber}
-                  onChange={(e) => setFormData({ ...formData, caseNumber: e.target.value })}
+                  value={formData.case_number}
+                  onChange={(e) => setFormData({ ...formData, case_number: e.target.value })}
                   className={`w-full px-3 py-2 rounded-lg ${
                     darkMode
                       ? 'bg-neutral-700 border-neutral-600'
@@ -113,8 +113,8 @@ const CaseForm: React.FC<CaseFormProps> = ({
                 <label className="block text-sm font-medium mb-1">Client Name</label>
                 <input
                   type="text"
-                  value={formData.clientName}
-                  onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
+                  value={formData.client_name}
+                  onChange={(e) => setFormData({ ...formData, client_name: e.target.value })}
                   className={`w-full px-3 py-2 rounded-lg ${
                     darkMode
                       ? 'bg-neutral-700 border-neutral-600'
@@ -158,8 +158,8 @@ const CaseForm: React.FC<CaseFormProps> = ({
                 <label className="block text-sm font-medium mb-1">Court Date</label>
                 <input
                   type="date"
-                  value={formData.courtDate}
-                  onChange={(e) => setFormData({ ...formData, courtDate: e.target.value })}
+                  value={formData.court_date}
+                  onChange={(e) => setFormData({ ...formData, court_date: e.target.value })}
                   className={`w-full px-3 py-2 rounded-lg ${
                     darkMode
                       ? 'bg-neutral-700 border-neutral-600'
@@ -173,8 +173,8 @@ const CaseForm: React.FC<CaseFormProps> = ({
             <div>
               <label className="block text-sm font-medium mb-1">Next Step / Important</label>
               <textarea
-                value={formData.nextStep}
-                onChange={(e) => setFormData({ ...formData, nextStep: e.target.value })}
+                value={formData.next_step}
+                onChange={(e) => setFormData({ ...formData, next_step: e.target.value })}
                 placeholder="Add next step or important notes..."
                 rows={3}
                 className={`w-full px-3 py-2 rounded-lg ${
@@ -188,8 +188,8 @@ const CaseForm: React.FC<CaseFormProps> = ({
             <div>
               <label className="block text-sm font-medium mb-1">To Follow Up / To Do</label>
               <textarea
-                value={formData.followUp}
-                onChange={(e) => setFormData({ ...formData, followUp: e.target.value })}
+                value={formData.follow_up}
+                onChange={(e) => setFormData({ ...formData, follow_up: e.target.value })}
                 placeholder="Add follow-up items or to-do tasks..."
                 rows={3}
                 className={`w-full px-3 py-2 rounded-lg ${
