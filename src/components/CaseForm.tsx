@@ -50,7 +50,19 @@ const CaseForm: React.FC<CaseFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData as Case);
+    
+    // Create a copy of the form data
+    const submissionData = { ...formData };
+    
+    // Convert empty court_date to null
+    if (!submissionData.court_date) {
+      submissionData.court_date = null;
+    } else {
+      // Ensure the date is in ISO format with timezone
+      submissionData.court_date = new Date(submissionData.court_date).toISOString();
+    }
+    
+    onSubmit(submissionData as Case);
   };
 
   return (
@@ -165,7 +177,6 @@ const CaseForm: React.FC<CaseFormProps> = ({
                       ? 'bg-neutral-700 border-neutral-600'
                       : 'bg-white border-gray-300'
                   }`}
-                  required
                 />
               </div>
             </div>
