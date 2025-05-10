@@ -149,7 +149,8 @@ function App() {
   const handleAddCase = async (newCase: Case) => {
     const caseWithId = { 
       ...newCase, 
-      id: crypto.randomUUID()
+      id: crypto.randomUUID(),
+      user_id: session?.user?.id
     };
     
     const { error } = await supabase
@@ -229,13 +230,13 @@ function App() {
     return [...casesToSort].sort((a, b) => {
       switch (sortOption) {
         case 'name-asc':
-          return a.clientName.localeCompare(b.clientName);
+          return a.client_name.localeCompare(b.client_name);
         case 'name-desc':
-          return b.clientName.localeCompare(a.clientName);
+          return b.client_name.localeCompare(a.client_name);
         case 'date-asc':
-          return new Date(a.courtDate).getTime() - new Date(b.courtDate).getTime();
+          return new Date(a.court_date).getTime() - new Date(b.court_date).getTime();
         case 'date-desc':
-          return new Date(b.courtDate).getTime() - new Date(a.courtDate).getTime();
+          return new Date(b.court_date).getTime() - new Date(a.court_date).getTime();
         case 'progress-asc':
           return calculateProgress(a) - calculateProgress(b);
         case 'progress-desc':
