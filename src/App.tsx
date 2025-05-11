@@ -147,8 +147,12 @@ function App() {
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
   const handleAddCase = async (newCase: Case) => {
+    // Convert caseNumber to case_number and clientName to client_name for database compatibility
+    const { caseNumber, clientName, ...rest } = newCase;
     const caseWithId = { 
-      ...newCase, 
+      ...rest,
+      case_number: caseNumber,
+      client_name: clientName,
       id: crypto.randomUUID(),
       user_id: session?.user?.id
     };
@@ -167,9 +171,17 @@ function App() {
   };
 
   const handleEditCase = async (updatedCase: Case) => {
+    // Convert caseNumber to case_number and clientName to client_name for database compatibility
+    const { caseNumber, clientName, ...rest } = updatedCase;
+    const caseToUpdate = {
+      ...rest,
+      case_number: caseNumber,
+      client_name: clientName,
+    };
+
     const { error } = await supabase
       .from('cases')
-      .update(updatedCase)
+      .update(caseToUpdate)
       .eq('id', updatedCase.id);
 
     if (error) {
@@ -199,9 +211,18 @@ function App() {
   };
 
   const restoreCase = async (caseToRestore: Case) => {
+    // Convert caseNumber to case_number and clientName to client_name for database compatibility
+    const { caseNumber, clientName, ...rest } = caseToRestore;
+    const caseData = {
+      ...rest,
+      case_number: caseNumber,
+      client_name: clientName,
+      deleted: false
+    };
+
     const { error } = await supabase
       .from('cases')
-      .insert([{ ...caseToRestore, deleted: false }]);
+      .insert([caseData]);
 
     if (error) {
       console.error('Error restoring case:', error);
