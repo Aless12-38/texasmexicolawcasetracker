@@ -21,26 +21,35 @@ const Auth: React.FC<AuthProps> = ({ darkMode }) => {
 
     try {
       if (isSignUp) {
-        const { data: authData, error: signUpError } = await supabase.auth.signUp({
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            data: {
+              full_name: fullName
+            }
+          }
         });
 
         if (signUpError) throw signUpError;
 
-        if (authData.user) {
-          await supabase.from('profiles').insert([
-            {
-              id: authData.user.id,
-              email,
-              full_name: fullName,
-            },
-          ]);
+        if (signUpData.user) {
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert([
+              {
+                id: signUpData.user.id,
+                email,
+                full_name: fullName
+              }
+            ]);
+
+          if (profileError) throw profileError;
         }
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
-          password,
+          password
         });
 
         if (signInError) throw signInError;
@@ -70,9 +79,9 @@ const Auth: React.FC<AuthProps> = ({ darkMode }) => {
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className={`w-full px-3 py-2 rounded-lg ${
+                className={`w-full px-3 py-2 rounded-lg border ${
                   darkMode
-                    ? 'bg-neutral-700 border-neutral-600'
+                    ? 'bg-neutral-700 border-neutral-600 text-white'
                     : 'bg-white border-gray-300'
                 }`}
                 required
@@ -86,9 +95,9 @@ const Auth: React.FC<AuthProps> = ({ darkMode }) => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={`w-full px-3 py-2 rounded-lg ${
+              className={`w-full px-3 py-2 rounded-lg border ${
                 darkMode
-                  ? 'bg-neutral-700 border-neutral-600'
+                  ? 'bg-neutral-700 border-neutral-600 text-white'
                   : 'bg-white border-gray-300'
               }`}
               required
@@ -101,9 +110,9 @@ const Auth: React.FC<AuthProps> = ({ darkMode }) => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className={`w-full px-3 py-2 rounded-lg ${
+              className={`w-full px-3 py-2 rounded-lg border ${
                 darkMode
-                  ? 'bg-neutral-700 border-neutral-600'
+                  ? 'bg-neutral-700 border-neutral-600 text-white'
                   : 'bg-white border-gray-300'
               }`}
               required
@@ -119,7 +128,9 @@ const Auth: React.FC<AuthProps> = ({ darkMode }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg flex items-center justify-center gap-2"
+            className={`w-full px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg flex items-center justify-center gap-2 ${
+              loading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
           >
             {loading ? (
               'Please wait...'
