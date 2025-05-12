@@ -28,8 +28,8 @@ export interface Transcripts {
 export interface Case {
   id: string;
   type: TabType;
-  case_number: string;
-  client_name: string;
+  caseNumber: string;
+  clientName: string;
   offense: string;
   court: string;
   court_date: string;
