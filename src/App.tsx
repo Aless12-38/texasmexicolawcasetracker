@@ -147,37 +147,50 @@ function App() {
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
   const handleAddCase = async (newCase: Case) => {
-    const caseWithId = {
-      ...newCase,
-      id: crypto.randomUUID(),
-      user_id: session?.user?.id,
-      case_number: newCase.caseNumber,
-      client_name: newCase.clientName
+    const caseData = {
+      type: newCase.type,
+      case_number: newCase.case_number,
+      client_name: newCase.client_name,
+      offense: newCase.offense,
+      court: newCase.court,
+      court_date: newCase.court_date,
+      next_step: newCase.next_step,
+      follow_up: newCase.follow_up,
+      checklist: newCase.checklist,
+      transcripts: newCase.transcripts,
+      user_id: session?.user?.id
     };
     
     const { error } = await supabase
       .from('cases')
-      .insert([caseWithId]);
+      .insert([caseData]);
 
     if (error) {
       console.error('Error adding case:', error);
       return;
     }
 
-    addToHistory(caseWithId);
+    addToHistory(newCase);
     setIsFormOpen(false);
   };
 
   const handleEditCase = async (updatedCase: Case) => {
-    const caseToUpdate = {
-      ...updatedCase,
-      case_number: updatedCase.caseNumber,
-      client_name: updatedCase.clientName
+    const caseData = {
+      type: updatedCase.type,
+      case_number: updatedCase.case_number,
+      client_name: updatedCase.client_name,
+      offense: updatedCase.offense,
+      court: updatedCase.court,
+      court_date: updatedCase.court_date,
+      next_step: updatedCase.next_step,
+      follow_up: updatedCase.follow_up,
+      checklist: updatedCase.checklist,
+      transcripts: updatedCase.transcripts
     };
 
     const { error } = await supabase
       .from('cases')
-      .update(caseToUpdate)
+      .update(caseData)
       .eq('id', updatedCase.id);
 
     if (error) {
@@ -208,9 +221,16 @@ function App() {
 
   const restoreCase = async (caseToRestore: Case) => {
     const caseData = {
-      ...caseToRestore,
-      case_number: caseToRestore.caseNumber,
-      client_name: caseToRestore.clientName,
+      type: caseToRestore.type,
+      case_number: caseToRestore.case_number,
+      client_name: caseToRestore.client_name,
+      offense: caseToRestore.offense,
+      court: caseToRestore.court,
+      court_date: caseToRestore.court_date,
+      next_step: caseToRestore.next_step,
+      follow_up: caseToRestore.follow_up,
+      checklist: caseToRestore.checklist,
+      transcripts: caseToRestore.transcripts,
       deleted: false
     };
 
