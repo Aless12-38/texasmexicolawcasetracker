@@ -147,14 +147,12 @@ function App() {
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
   const handleAddCase = async (newCase: Case) => {
-    // Convert caseNumber to case_number and clientName to client_name for database compatibility
-    const { caseNumber, clientName, ...rest } = newCase;
-    const caseWithId = { 
-      ...rest,
-      case_number: caseNumber,
-      client_name: clientName,
+    const caseWithId = {
+      ...newCase,
       id: crypto.randomUUID(),
-      user_id: session?.user?.id
+      user_id: session?.user?.id,
+      case_number: newCase.caseNumber,
+      client_name: newCase.clientName
     };
     
     const { error } = await supabase
@@ -171,12 +169,10 @@ function App() {
   };
 
   const handleEditCase = async (updatedCase: Case) => {
-    // Convert caseNumber to case_number and clientName to client_name for database compatibility
-    const { caseNumber, clientName, ...rest } = updatedCase;
     const caseToUpdate = {
-      ...rest,
-      case_number: caseNumber,
-      client_name: clientName,
+      ...updatedCase,
+      case_number: updatedCase.caseNumber,
+      client_name: updatedCase.clientName
     };
 
     const { error } = await supabase
@@ -211,12 +207,10 @@ function App() {
   };
 
   const restoreCase = async (caseToRestore: Case) => {
-    // Convert caseNumber to case_number and clientName to client_name for database compatibility
-    const { caseNumber, clientName, ...rest } = caseToRestore;
     const caseData = {
-      ...rest,
-      case_number: caseNumber,
-      client_name: clientName,
+      ...caseToRestore,
+      case_number: caseToRestore.caseNumber,
+      client_name: caseToRestore.clientName,
       deleted: false
     };
 
