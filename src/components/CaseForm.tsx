@@ -17,56 +17,43 @@ const CaseForm: React.FC<CaseFormProps> = ({
   darkMode,
   availableTabs,
 }) => {
-  const [formData, setFormData] = useState<Partial<Case>>(
-    editingCase || {
-      type: availableTabs[0] as TabType,
-      case_number: '',
-      client_name: '',
-      offense: '',
-      court: '',
-      court_date: '',
-      next_step: '',
-      follow_up: '',
-      checklist: {
-        DME: { checked: false, notes: '' },
-        'Scan OCR': { checked: false, notes: '' },
-        Organized: { checked: false, notes: '' },
-        'Checklist DME': { checked: false, notes: '' },
-        'Justice Text Added': { checked: false, notes: '' },
-        Dropbox: { checked: false, notes: '' },
+  const [formData, setFormData] = useState<Case>({
+    id: editingCase?.id || '',
+    type: editingCase?.type || availableTabs[0] as TabType,
+    caseNumber: editingCase?.caseNumber || '',
+    clientName: editingCase?.clientName || '',
+    offense: editingCase?.offense || '',
+    court: editingCase?.court || '',
+    court_date: editingCase?.court_date || '',
+    next_step: editingCase?.next_step || '',
+    follow_up: editingCase?.follow_up || '',
+    checklist: editingCase?.checklist || {
+      DME: { checked: false, notes: '' },
+      'Scan OCR': { checked: false, notes: '' },
+      Organized: { checked: false, notes: '' },
+      'Checklist DME': { checked: false, notes: '' },
+      'Justice Text Added': { checked: false, notes: '' },
+      Dropbox: { checked: false, notes: '' },
+    },
+    transcripts: editingCase?.transcripts || {
+      videos: {
+        total: 0,
+        items: [],
       },
-      transcripts: {
-        videos: {
-          total: 0,
-          items: [],
-        },
-        audio: {
-          total: 0,
-          items: [],
-        },
+      audio: {
+        total: 0,
+        items: [],
       },
-    }
-  );
+    },
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Create a copy of the form data
-    const submissionData = { ...formData };
-    
-    // Convert empty court_date to null
-    if (!submissionData.court_date) {
-      submissionData.court_date = null;
-    } else {
-      // Ensure the date is in ISO format with timezone
-      submissionData.court_date = new Date(submissionData.court_date).toISOString();
-    }
-    
-    onSubmit(submissionData as Case);
+    onSubmit(formData);
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div 
         className={`relative w-full max-w-2xl rounded-lg shadow-lg ${
           darkMode ? 'bg-neutral-800' : 'bg-white'
@@ -92,11 +79,12 @@ const CaseForm: React.FC<CaseFormProps> = ({
                 <select
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value as TabType })}
-                  className={`w-full px-3 py-2 rounded-lg ${
+                  className={`w-full px-3 py-2 rounded-lg border ${
                     darkMode
                       ? 'bg-neutral-700 border-neutral-600'
                       : 'bg-white border-gray-300'
                   }`}
+                  required
                 >
                   {availableTabs.map((tab) => (
                     <option key={tab} value={tab}>
@@ -110,9 +98,9 @@ const CaseForm: React.FC<CaseFormProps> = ({
                 <label className="block text-sm font-medium mb-1">Case Number</label>
                 <input
                   type="text"
-                  value={formData.case_number}
-                  onChange={(e) => setFormData({ ...formData, case_number: e.target.value })}
-                  className={`w-full px-3 py-2 rounded-lg ${
+                  value={formData.caseNumber}
+                  onChange={(e) => setFormData({ ...formData, caseNumber: e.target.value })}
+                  className={`w-full px-3 py-2 rounded-lg border ${
                     darkMode
                       ? 'bg-neutral-700 border-neutral-600'
                       : 'bg-white border-gray-300'
@@ -125,9 +113,9 @@ const CaseForm: React.FC<CaseFormProps> = ({
                 <label className="block text-sm font-medium mb-1">Client Name</label>
                 <input
                   type="text"
-                  value={formData.client_name}
-                  onChange={(e) => setFormData({ ...formData, client_name: e.target.value })}
-                  className={`w-full px-3 py-2 rounded-lg ${
+                  value={formData.clientName}
+                  onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
+                  className={`w-full px-3 py-2 rounded-lg border ${
                     darkMode
                       ? 'bg-neutral-700 border-neutral-600'
                       : 'bg-white border-gray-300'
@@ -142,7 +130,7 @@ const CaseForm: React.FC<CaseFormProps> = ({
                   type="text"
                   value={formData.offense}
                   onChange={(e) => setFormData({ ...formData, offense: e.target.value })}
-                  className={`w-full px-3 py-2 rounded-lg ${
+                  className={`w-full px-3 py-2 rounded-lg border ${
                     darkMode
                       ? 'bg-neutral-700 border-neutral-600'
                       : 'bg-white border-gray-300'
@@ -157,7 +145,7 @@ const CaseForm: React.FC<CaseFormProps> = ({
                   type="text"
                   value={formData.court}
                   onChange={(e) => setFormData({ ...formData, court: e.target.value })}
-                  className={`w-full px-3 py-2 rounded-lg ${
+                  className={`w-full px-3 py-2 rounded-lg border ${
                     darkMode
                       ? 'bg-neutral-700 border-neutral-600'
                       : 'bg-white border-gray-300'
@@ -172,7 +160,7 @@ const CaseForm: React.FC<CaseFormProps> = ({
                   type="date"
                   value={formData.court_date}
                   onChange={(e) => setFormData({ ...formData, court_date: e.target.value })}
-                  className={`w-full px-3 py-2 rounded-lg ${
+                  className={`w-full px-3 py-2 rounded-lg border ${
                     darkMode
                       ? 'bg-neutral-700 border-neutral-600'
                       : 'bg-white border-gray-300'
@@ -188,7 +176,7 @@ const CaseForm: React.FC<CaseFormProps> = ({
                 onChange={(e) => setFormData({ ...formData, next_step: e.target.value })}
                 placeholder="Add next step or important notes..."
                 rows={3}
-                className={`w-full px-3 py-2 rounded-lg ${
+                className={`w-full px-3 py-2 rounded-lg border ${
                   darkMode
                     ? 'bg-neutral-700 border-neutral-600'
                     : 'bg-white border-gray-300'
@@ -203,7 +191,7 @@ const CaseForm: React.FC<CaseFormProps> = ({
                 onChange={(e) => setFormData({ ...formData, follow_up: e.target.value })}
                 placeholder="Add follow-up items or to-do tasks..."
                 rows={3}
-                className={`w-full px-3 py-2 rounded-lg ${
+                className={`w-full px-3 py-2 rounded-lg border ${
                   darkMode
                     ? 'bg-neutral-700 border-neutral-600'
                     : 'bg-white border-gray-300'
@@ -214,7 +202,7 @@ const CaseForm: React.FC<CaseFormProps> = ({
             <div>
               <h3 className="text-lg font-medium mb-3">Checklist</h3>
               <div className="grid gap-4">
-                {Object.entries(formData.checklist || {}).map(([key, item]) => (
+                {Object.entries(formData.checklist).map(([key, item]) => (
                   <div key={key} className="space-y-2">
                     <div className="flex items-center gap-2">
                       <input
@@ -242,7 +230,7 @@ const CaseForm: React.FC<CaseFormProps> = ({
                         }
                       })}
                       placeholder="Add notes..."
-                      className={`w-full px-3 py-2 rounded-lg ${
+                      className={`w-full px-3 py-2 rounded-lg border ${
                         darkMode
                           ? 'bg-neutral-700 border-neutral-600'
                           : 'bg-white border-gray-300'
@@ -276,7 +264,7 @@ const CaseForm: React.FC<CaseFormProps> = ({
                         }
                       });
                     }}
-                    className={`w-full px-3 py-2 rounded-lg ${
+                    className={`w-full px-3 py-2 rounded-lg border ${
                       darkMode
                         ? 'bg-neutral-700 border-neutral-600'
                         : 'bg-white border-gray-300'
@@ -304,7 +292,7 @@ const CaseForm: React.FC<CaseFormProps> = ({
                         }
                       });
                     }}
-                    className={`w-full px-3 py-2 rounded-lg ${
+                    className={`w-full px-3 py-2 rounded-lg border ${
                       darkMode
                         ? 'bg-neutral-700 border-neutral-600'
                         : 'bg-white border-gray-300'
