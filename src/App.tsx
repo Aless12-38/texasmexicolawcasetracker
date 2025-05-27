@@ -56,6 +56,11 @@ const handleEditCase = async (updatedCase: Case) => {
 };
 
 const sortCases = (casesToSort: Case[]) => {
+  // Return empty array if casesToSort is not an array
+  if (!Array.isArray(casesToSort)) {
+    return [];
+  }
+
   return [...casesToSort].sort((a, b) => {
     switch (sortOption) {
       case 'name-asc':
@@ -76,4 +81,4 @@ const sortCases = (casesToSort: Case[]) => {
   });
 };
 
-export default sortCases
+export default App;
