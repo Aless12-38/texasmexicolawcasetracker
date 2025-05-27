@@ -149,8 +149,8 @@ function App() {
   const handleAddCase = async (newCase: Case) => {
     const caseData = {
       type: newCase.type,
-      case_number: newCase.case_number,
-      client_name: newCase.client_name,
+      case_number: newCase.caseNumber,
+      client_name: newCase.clientName,
       offense: newCase.offense,
       court: newCase.court,
       court_date: newCase.court_date,
@@ -177,8 +177,8 @@ function App() {
   const handleEditCase = async (updatedCase: Case) => {
     const caseData = {
       type: updatedCase.type,
-      case_number: updatedCase.case_number,
-      client_name: updatedCase.client_name,
+      case_number: updatedCase.caseNumber,
+      client_name: updatedCase.clientName,
       offense: updatedCase.offense,
       court: updatedCase.court,
       court_date: updatedCase.court_date,
@@ -222,8 +222,8 @@ function App() {
   const restoreCase = async (caseToRestore: Case) => {
     const caseData = {
       type: caseToRestore.type,
-      case_number: caseToRestore.case_number,
-      client_name: caseToRestore.client_name,
+      case_number: caseToRestore.caseNumber,
+      client_name: caseToRestore.clientName,
       offense: caseToRestore.offense,
       court: caseToRestore.court,
       court_date: caseToRestore.court_date,
@@ -265,9 +265,9 @@ function App() {
     return [...casesToSort].sort((a, b) => {
       switch (sortOption) {
         case 'name-asc':
-          return a.client_name.localeCompare(b.client_name);
+          return a.clientName.localeCompare(b.clientName);
         case 'name-desc':
-          return b.client_name.localeCompare(a.client_name);
+          return b.clientName.localeCompare(a.clientName);
         case 'date-asc':
           return new Date(a.court_date).getTime() - new Date(b.court_date).getTime();
         case 'date-desc':
