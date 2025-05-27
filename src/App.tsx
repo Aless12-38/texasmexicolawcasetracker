@@ -75,3 +75,5 @@ const sortCases = (casesToSort: Case[]) => {
     }
   });
 };
+
+export default sortCases
