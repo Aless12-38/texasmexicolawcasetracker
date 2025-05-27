@@ -7,7 +7,7 @@ import CaseForm from './components/CaseForm';
 import DeleteConfirmation from './components/DeleteConfirmation';
 import TrashModal from './components/TrashModal';
 import VersionHistoryModal from './components/VersionHistoryModal';
-import { Scale, Plus, Moon, Sun, Trash2 } from 'lucide-react';
+import { Scale, Plus, Moon, Sun, Trash2, RefreshCw } from 'lucide-react';
 
 function App() {
   const [session, setSession] = useState(null);
@@ -42,6 +42,29 @@ function App() {
       fetchCases();
     }
   }, [session]);
+
+  const syncWithMyCase = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mycase-sync`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to sync with MyCase');
+      }
+
+      fetchCases();
+    } catch (error) {
+      console.error('Error syncing with MyCase:', error);
+    }
+  };
 
   const fetchCases = async () => {
     const { data, error } = await supabase
@@ -163,6 +186,14 @@ function App() {
             </div>
 
             <div className="flex items-center gap-4">
+              <button
+                onClick={syncWithMyCase}
+                className="flex items-center gap-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
+              >
+                <RefreshCw className="w-4 h-4" />
+                <span>Sync MyCase</span>
+              </button>
+
               <button
                 onClick={() => setDarkMode(!darkMode)}
                 className={`p-2 rounded-lg ${
