@@ -20,8 +20,8 @@ const CaseForm: React.FC<CaseFormProps> = ({
   const [formData, setFormData] = useState<Case>({
     id: editingCase?.id || '',
     type: editingCase?.type || availableTabs[0] as TabType,
-    caseNumber: editingCase?.caseNumber || '',
-    clientName: editingCase?.clientName || '',
+    case_number: editingCase?.case_number || '',
+    client_name: editingCase?.client_name || '',
     offense: editingCase?.offense || '',
     court: editingCase?.court || '',
     court_date: editingCase?.court_date || '',
@@ -98,8 +98,8 @@ const CaseForm: React.FC<CaseFormProps> = ({
                 <label className="block text-sm font-medium mb-1">Case Number</label>
                 <input
                   type="text"
-                  value={formData.caseNumber}
-                  onChange={(e) => setFormData({ ...formData, caseNumber: e.target.value })}
+                  value={formData.case_number}
+                  onChange={(e) => setFormData({ ...formData, case_number: e.target.value })}
                   className={`w-full px-3 py-2 rounded-lg border ${
                     darkMode
                       ? 'bg-neutral-700 border-neutral-600'
@@ -113,8 +113,8 @@ const CaseForm: React.FC<CaseFormProps> = ({
                 <label className="block text-sm font-medium mb-1">Client Name</label>
                 <input
                   type="text"
-                  value={formData.clientName}
-                  onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
+                  value={formData.client_name}
+                  onChange={(e) => setFormData({ ...formData, client_name: e.target.value })}
                   className={`w-full px-3 py-2 rounded-lg border ${
                     darkMode
                       ? 'bg-neutral-700 border-neutral-600'
